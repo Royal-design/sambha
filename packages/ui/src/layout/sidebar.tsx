@@ -76,8 +76,11 @@ const SambhaSidebar = ({ sidebarItems }: { sidebarItems: SidebarItem[] }) => {
   const [activeItem, setActiveItem] = useState<SidebarItem | undefined>(() =>
     sidebarItems?.find((item) => item.url === pathname)
   );
+  const role: string = "vendor";
 
-  const isSettingsActive = pathname.includes("/profile/settings");
+  const isSettingsActive = pathname.includes(
+    role === "vendor" ? "/profile/vendor-settings" : "/profile/settings"
+  );
 
   // useEffect(() => {
   //   if (pathname) {
@@ -96,7 +99,6 @@ const SambhaSidebar = ({ sidebarItems }: { sidebarItems: SidebarItem[] }) => {
       );
     }
   }, [pathname, sidebarItems]); // Added sidebarItems to dependencies
-
   return (
     <Sidebar className="!bg-primary-darkPurple  overflow-hidden block w-full lg:w-[20.625rem]">
       <section className="flex flex-col text-sidebar-foreground md:rounded-xl shadow-[0px_0px_4px_0px_#0000001A] p-4  overflow-y-auto h-full md:h-[calc(100vh-70px)] no-scrollbar w-full">
@@ -133,7 +135,13 @@ const SambhaSidebar = ({ sidebarItems }: { sidebarItems: SidebarItem[] }) => {
                 : "hover:bg-primary-light/10",
               "flex items-center p-3 rounded-full cursor-pointer w-full gap-4"
             )}
-            onClick={() => router.push("/profile/settings")}
+            onClick={() =>
+              router.push(
+                role === "vendor"
+                  ? "/profile/vendor-settings"
+                  : "/profile/settings"
+              )
+            }
           >
             {isSettingsActive ? <SettingsGradient /> : <Settings />}
 

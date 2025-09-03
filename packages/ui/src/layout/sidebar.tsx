@@ -1,12 +1,12 @@
 "use client";
+import clsx from "clsx";
 import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useEffect, useState } from "react";
-import { Sidebar } from "../sidebar";
+import { userData } from "../../../../apps/web/app/[accessType]/chats/data";
 import { Settings, SettingsGradient } from "../icons";
+import { Sidebar } from "../sidebar";
 import Image from "next/image";
-import { userData } from "../../../../apps/web/app/(dashboard)/event-planner/chats/data";
 import { ChevronRight } from "lucide-react";
-import clsx from "clsx";
 
 type BaseSidebarItem = {
   icon: ReactNode;
@@ -47,12 +47,6 @@ const SidebarItem = ({ icon, label, active, onClick }: SidebarItemProps) => (
     ${active ? "bg-primary-light text-sidebar-primary" : "hover:bg-primary-light/10"}
   `}
   >
-    {/* <span className=" bg-card h-10 w-10 flex items-center justify-center">
-      {React.isValidElement(icon)
-        ? React.cloneElement(icon as React.ReactElement<any>, { active })
-        : icon}
-    </span> */}
-
     <span className="bg-card h-10 w-10 flex items-center justify-center">
       {React.isValidElement<IconProps>(icon)
         ? React.cloneElement(icon, {
@@ -70,25 +64,21 @@ const SidebarItem = ({ icon, label, active, onClick }: SidebarItemProps) => (
   </button>
 );
 
-const SambhaSidebar = ({ sidebarItems }: { sidebarItems: SidebarItem[] }) => {
+const SambhaSidebar = ({
+  sidebarItems,
+  role,
+}: {
+  sidebarItems: SidebarItem[];
+  role: string;
+}) => {
   const pathname = usePathname();
   const router = useRouter();
   const [activeItem, setActiveItem] = useState<SidebarItem | undefined>(() =>
     sidebarItems?.find((item) => item.url === pathname)
   );
-  const role: string = "vendor";
+  // let role: string = "planner";
 
-  const isSettingsActive = pathname.includes(
-    role === "vendor" ? "/profile/vendor-settings" : "/profile/settings"
-  );
-
-  // useEffect(() => {
-  //   if (pathname) {
-  //     setActiveItem(
-  //       sidebarItems?.find((item) => item.url && pathname.includes(item.url))
-  //     );
-  //   }
-  // }, [pathname]);
+  const isSettingsActive = pathname.includes(`${role}/settings`);
 
   useEffect(() => {
     if (pathname) {
@@ -98,7 +88,8 @@ const SambhaSidebar = ({ sidebarItems }: { sidebarItems: SidebarItem[] }) => {
         )
       );
     }
-  }, [pathname, sidebarItems]); // Added sidebarItems to dependencies
+  }, [pathname, sidebarItems]);
+
   return (
     <Sidebar className="!bg-primary-darkPurple  overflow-hidden block w-full lg:w-[20.625rem]">
       <section className="flex flex-col text-sidebar-foreground md:rounded-xl shadow-[0px_0px_4px_0px_#0000001A] p-4  overflow-y-auto h-full md:h-[calc(100vh-70px)] no-scrollbar w-full">
@@ -120,7 +111,7 @@ const SambhaSidebar = ({ sidebarItems }: { sidebarItems: SidebarItem[] }) => {
               onClick={() => {
                 setActiveItem(item);
                 if ("url" in item && item.url) {
-                  router.push(item.url);
+                  router.push(`/${role}/${item.url}`);
                 }
               }}
             />
@@ -135,13 +126,7 @@ const SambhaSidebar = ({ sidebarItems }: { sidebarItems: SidebarItem[] }) => {
                 : "hover:bg-primary-light/10",
               "flex items-center p-3 rounded-full cursor-pointer w-full gap-4"
             )}
-            onClick={() =>
-              router.push(
-                role === "vendor"
-                  ? "/profile/vendor-settings"
-                  : "/profile/settings"
-              )
-            }
+            onClick={() => router.push(`/${role}/settings`)}
           >
             {isSettingsActive ? <SettingsGradient /> : <Settings />}
 
@@ -157,7 +142,7 @@ const SambhaSidebar = ({ sidebarItems }: { sidebarItems: SidebarItem[] }) => {
           </div>
           <div
             className="flex items-center justify-between mt-6 cursor-pointer"
-            onClick={() => router.push("/profile")}
+            onClick={() => router.push(`/${role}/profile`)}
           >
             <div className="flex space-x-4 items-center text-white-base">
               <Image

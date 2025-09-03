@@ -58,7 +58,7 @@ export const VendorProfile = () => {
 
           <Button
             className="max-md:w-full"
-            onClick={() => router.push("/profile/vendor-settings")}
+            onClick={() => router.push("/vendor/settings")}
           >
             Profile Settings
           </Button>
